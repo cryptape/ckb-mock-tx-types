@@ -118,6 +118,7 @@ pub struct Resource {
 }
 
 impl Resource {
+    #[allow(clippy::mutable_key_type)]
     pub fn from_both<L: MockResourceLoader>(
         mock_tx: &MockTransaction,
         mut loader: L,
@@ -192,7 +193,7 @@ impl Resource {
         TransactionInfo::new(
             0,
             EpochNumberWithFraction::new(0, 0, 1800),
-            header.unwrap_or_else(Byte32::default),
+            header.unwrap_or_default(),
             0,
         )
     }
@@ -201,7 +202,7 @@ impl Resource {
 impl<'a> HeaderChecker for Resource {
     fn check_valid(&self, block_hash: &Byte32) -> Result<(), OutPointError> {
         if !self.required_headers.contains_key(block_hash) {
-            return Err(OutPointError::InvalidHeader(block_hash.clone()).into());
+            return Err(OutPointError::InvalidHeader(block_hash.clone()));
         }
         Ok(())
     }
