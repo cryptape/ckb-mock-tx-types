@@ -199,7 +199,7 @@ impl Resource {
     }
 }
 
-impl<'a> HeaderChecker for Resource {
+impl HeaderChecker for Resource {
     fn check_valid(&self, block_hash: &Byte32) -> Result<(), OutPointError> {
         if !self.required_headers.contains_key(block_hash) {
             return Err(OutPointError::InvalidHeader(block_hash.clone()));
