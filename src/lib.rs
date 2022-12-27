@@ -112,12 +112,17 @@ pub trait MockResourceLoader {
     ) -> Result<Option<(CellOutput, Bytes, Option<Byte32>)>, String>;
 }
 
+#[derive(Clone)]
 pub struct Resource {
     required_cells: HashMap<OutPoint, CellMeta>,
     required_headers: HashMap<Byte32, HeaderView>,
 }
 
 impl Resource {
+    pub fn from_mock_tx(mock_tx: &MockTransaction) -> Result<Resource, String> {
+        Self::from_both(mock_tx, DummyResourceLoader {})
+    }
+
     #[allow(clippy::mutable_key_type)]
     pub fn from_both<L: MockResourceLoader>(
         mock_tx: &MockTransaction,
@@ -358,5 +363,20 @@ impl From<ReprMockTransaction> for MockTransaction {
             mock_info: tx.mock_info.into(),
             tx: tx.tx.into(),
         }
+    }
+}
+
+pub struct DummyResourceLoader {}
+
+impl MockResourceLoader for DummyResourceLoader {
+    fn get_header(&mut self, hash: H256) -> Result<Option<HeaderView>, String> {
+        Err(format!("Header {:x} is missing!", hash))
+    }
+
+    fn get_live_cell(
+        &mut self,
+        out_point: OutPoint,
+    ) -> Result<Option<(CellOutput, Bytes, Option<Byte32>)>, String> {
+        Err(format!("Cell: {:?} is missing!", out_point))
     }
 }
