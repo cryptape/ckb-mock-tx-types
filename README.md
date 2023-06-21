@@ -1,3 +1,4 @@
+Moved to [a new repo](https://github.com/nervosnetwork/ckb-standalone-debugger/tree/develop/ckb-mock-tx-types)
 
 ## Data types for mock transaction
 
